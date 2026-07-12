@@ -16,6 +16,7 @@ import * as Haptics from 'expo-haptics';
 import { useColors } from '@/hooks/useColors';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { destinations } from '@/constants/destinations';
+import { AppHeader } from '@/components/AppHeader';
 
 const { width } = Dimensions.get('window');
 
@@ -25,8 +26,8 @@ export default function HomeScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
-  const topPadding = Platform.OS === 'web' ? 67 : insets.top;
   const featuredDests = destinations.slice(0, 6);
+  const bottomPadding = Platform.OS === 'web' ? 84 : insets.bottom + 49;
 
   const quickActions = [
     {
@@ -50,37 +51,43 @@ export default function HomeScreen() {
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: Platform.OS === 'web' ? 34 : insets.bottom + 80 }]}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomPadding }]}
         showsVerticalScrollIndicator={false}
       >
-        {/* Hero */}
-        <View style={[styles.hero, { paddingTop: topPadding }]}>
-          <Image
-            source={require('@/assets/images/hero.jpg')}
-            style={styles.heroImg}
-            resizeMode="cover"
-          />
-          <View style={styles.heroOverlay} />
-          <View style={styles.heroContent}>
-            <View style={[styles.heroBadge, { backgroundColor: colors.primary + 'CC' }]}>
-              <Text style={styles.heroBadgeText}>🇪🇬 Smart Egypt</Text>
+        {/* Hero مع هيدر شفاف مرسوم فوقه */}
+        <View style={styles.heroWrapper}>
+          <View style={styles.hero}>
+            <Image
+              source={require('@/assets/images/hero.jpg')}
+              style={styles.heroImg}
+              resizeMode="cover"
+            />
+            <View style={styles.heroOverlay} />
+            <View style={styles.heroContent}>
+              <View style={[styles.heroBadge, { backgroundColor: colors.primary + 'CC' }]}>
+                <Text style={styles.heroBadgeText}>🇪🇬 Smart Egypt</Text>
+              </View>
+              <Text style={[styles.heroTitle, { textAlign: isRTL ? 'right' : 'left' }]}>
+                {t('discoverEgypt')}
+              </Text>
+              <Text style={[styles.heroSub, { textAlign: isRTL ? 'right' : 'left' }]}>
+                {t('aiTravelGuide')}
+              </Text>
+              <TouchableOpacity
+                style={[styles.heroBtn, { backgroundColor: colors.primary }]}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  router.push('/(tabs)/explore' as any);
+                }}
+              >
+                <Feather name="compass" size={16} color="#fff" />
+                <Text style={styles.heroBtnText}>{t('exploreNow')}</Text>
+              </TouchableOpacity>
             </View>
-            <Text style={[styles.heroTitle, { textAlign: isRTL ? 'right' : 'left' }]}>
-              {t('discoverEgypt')}
-            </Text>
-            <Text style={[styles.heroSub, { textAlign: isRTL ? 'right' : 'left' }]}>
-              {t('aiTravelGuide')}
-            </Text>
-            <TouchableOpacity
-              style={[styles.heroBtn, { backgroundColor: colors.primary }]}
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                router.push('/(tabs)/explore' as any);
-              }}
-            >
-              <Feather name="compass" size={16} color="#fff" />
-              <Text style={styles.heroBtnText}>{t('exploreNow')}</Text>
-            </TouchableOpacity>
+          </View>
+          {/* هيدر شفاف فوق الصورة */}
+          <View style={styles.heroHeaderOverlay}>
+            <AppHeader transparent />
           </View>
         </View>
 
@@ -161,8 +168,17 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   scrollContent: {},
-  hero: {
+  heroWrapper: {
     position: 'relative',
+  },
+  heroHeaderOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 10,
+  },
+  hero: {
     height: 340,
     justifyContent: 'flex-end',
   },

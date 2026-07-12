@@ -15,6 +15,7 @@ import { Feather } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useColors } from '@/hooks/useColors';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { AppHeader } from '@/components/AppHeader';
 
 interface Message {
   id: string;
@@ -23,10 +24,11 @@ interface Message {
 }
 
 const API_BASE = `https://${process.env.EXPO_PUBLIC_DOMAIN}`;
+const TAB_BAR_HEIGHT = Platform.OS === 'web' ? 84 : 49;
 
 export default function ChatbotScreen() {
   const colors = useColors();
-  const { t, language, isRTL } = useLanguage();
+  const { t, isRTL } = useLanguage();
   const insets = useSafeAreaInsets();
 
   const [messages, setMessages] = useState<Message[]>([
@@ -47,12 +49,7 @@ export default function ChatbotScreen() {
 
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
-    const userMsg: Message = {
-      id: Date.now().toString(),
-      isBot: false,
-      text,
-    };
-
+    const userMsg: Message = { id: Date.now().toString(), isBot: false, text };
     const currentMessages = messages;
     setMessages((prev) => [userMsg, ...prev]);
     setInput('');
@@ -65,63 +62,39 @@ export default function ChatbotScreen() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: history }),
       });
-
       const data = await res.json();
-      const botMsg: Message = {
-        id: (Date.now() + 1).toString(),
-        isBot: true,
-        text: data.reply ?? t('errorOccurred'),
-      };
-
-      setMessages((prev) => [botMsg, ...prev]);
+      setMessages((prev) => [
+        { id: (Date.now() + 1).toString(), isBot: true, text: data.reply ?? t('errorOccurred') },
+        ...prev,
+      ]);
     } catch {
-      const errMsg: Message = {
-        id: (Date.now() + 1).toString(),
-        isBot: true,
-        text: t('errorOccurred'),
-      };
-      setMessages((prev) => [errMsg, ...prev]);
+      setMessages((prev) => [
+        { id: (Date.now() + 1).toString(), isBot: true, text: t('errorOccurred') },
+        ...prev,
+      ]);
     } finally {
       setIsLoading(false);
     }
   }, [input, isLoading, messages, t]);
 
-  const topPadding = Platform.OS === 'web' ? 67 : insets.top;
-  const bottomPadding = Platform.OS === 'web' ? 34 : insets.bottom;
+  // الـ bottom padding = safe area + ارتفاع الـ tab bar
+  const bottomPadding = insets.bottom + TAB_BAR_HEIGHT;
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      {/* Header */}
-      <View
-        style={[
-          styles.header,
-          {
-            paddingTop: topPadding + 16,
-            backgroundColor: colors.background,
-            borderBottomColor: colors.border,
-          },
-        ]}
-      >
-        <View style={[styles.botAvatar, { backgroundColor: colors.primary }]}>
-          <Feather name="cpu" size={18} color="#fff" />
-        </View>
-        <View>
-          <Text style={[styles.headerTitle, { color: colors.foreground }]}>
-            {t('chatbotTitle')}
-          </Text>
-          <Text style={[styles.headerSub, { color: colors.mutedForeground }]}>
-            Powered by Groq AI
-          </Text>
-        </View>
-      </View>
+      {/* هيدر الـ app */}
+      <AppHeader />
 
-      {/* Messages — inverted FlatList */}
+      {/* فاصل */}
+      <View style={[styles.divider, { backgroundColor: colors.border }]} />
+
+      {/* الرسائل — inverted FlatList */}
       <FlatList
         ref={flatListRef}
         data={messages}
         keyExtractor={(item) => item.id}
         inverted
-        contentContainerStyle={[styles.listContent, { paddingBottom: 8 }]}
+        contentContainerStyle={[styles.listContent, { paddingBottom: 12 }]}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={
           isLoading ? (
@@ -131,12 +104,7 @@ export default function ChatbotScreen() {
           ) : null
         }
         renderItem={({ item }) => (
-          <View
-            style={[
-              styles.messageRow,
-              item.isBot ? styles.botRow : styles.userRow,
-            ]}
-          >
+          <View style={[styles.messageRow, item.isBot ? styles.botRow : styles.userRow]}>
             {item.isBot && (
               <View style={[styles.miniAvatar, { backgroundColor: colors.primary }]}>
                 <Feather name="cpu" size={12} color="#fff" />
@@ -166,18 +134,15 @@ export default function ChatbotScreen() {
         )}
       />
 
-      {/* Input */}
-      <KeyboardAvoidingView
-        behavior="padding"
-        keyboardVerticalOffset={0}
-      >
+      {/* حقل الكتابة — فوق الـ tab bar مباشرةً */}
+      <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={TAB_BAR_HEIGHT}>
         <View
           style={[
             styles.inputContainer,
             {
               backgroundColor: colors.background,
               borderTopColor: colors.border,
-              paddingBottom: bottomPadding + 8,
+              paddingBottom: bottomPadding,
             },
           ]}
         >
@@ -202,14 +167,16 @@ export default function ChatbotScreen() {
           <TouchableOpacity
             style={[
               styles.sendBtn,
-              {
-                backgroundColor: input.trim() && !isLoading ? colors.primary : colors.muted,
-              },
+              { backgroundColor: input.trim() && !isLoading ? colors.primary : colors.muted },
             ]}
             onPress={sendMessage}
             disabled={!input.trim() || isLoading}
           >
-            <Feather name="send" size={18} color={input.trim() && !isLoading ? '#fff' : colors.mutedForeground} />
+            <Feather
+              name="send"
+              size={18}
+              color={input.trim() && !isLoading ? '#fff' : colors.mutedForeground}
+            />
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
@@ -219,29 +186,7 @@ export default function ChatbotScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingBottom: 14,
-    borderBottomWidth: 1,
-    gap: 12,
-  },
-  botAvatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headerTitle: {
-    fontSize: 17,
-    fontFamily: 'Inter_700Bold',
-  },
-  headerSub: {
-    fontSize: 12,
-    fontFamily: 'Inter_400Regular',
-  },
+  divider: { height: 1 },
   listContent: {
     paddingHorizontal: 16,
     paddingTop: 12,
@@ -267,12 +212,8 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 18,
   },
-  botBubble: {
-    borderBottomLeftRadius: 4,
-  },
-  userBubble: {
-    borderBottomRightRadius: 4,
-  },
+  botBubble: { borderBottomLeftRadius: 4 },
+  userBubble: { borderBottomRightRadius: 4 },
   bubbleText: {
     fontSize: 15,
     fontFamily: 'Inter_400Regular',

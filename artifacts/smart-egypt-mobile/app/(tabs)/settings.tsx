@@ -13,6 +13,7 @@ import * as Haptics from 'expo-haptics';
 import { useColors } from '@/hooks/useColors';
 import { useLanguage, Language } from '@/contexts/LanguageContext';
 import { useTheme } from '@/contexts/ThemeContext';
+import { AppHeader } from '@/components/AppHeader';
 
 type ThemeMode = 'system' | 'light' | 'dark';
 
@@ -38,8 +39,7 @@ export default function SettingsScreen() {
   const { themeMode, setThemeMode } = useTheme();
   const insets = useSafeAreaInsets();
 
-  const topPadding = Platform.OS === 'web' ? 67 : insets.top;
-  const bottomPadding = Platform.OS === 'web' ? 34 : insets.bottom;
+  const bottomPadding = Platform.OS === 'web' ? 84 : insets.bottom + 49;
 
   const handleTheme = (mode: ThemeMode) => {
     Haptics.selectionAsync();
@@ -53,8 +53,9 @@ export default function SettingsScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <AppHeader />
       <ScrollView
-        contentContainerStyle={[styles.content, { paddingTop: topPadding + 16, paddingBottom: bottomPadding + 80 }]}
+        contentContainerStyle={[styles.content, { paddingBottom: bottomPadding }]}
         showsVerticalScrollIndicator={false}
       >
         <Text style={[styles.pageTitle, { color: colors.foreground }]}>

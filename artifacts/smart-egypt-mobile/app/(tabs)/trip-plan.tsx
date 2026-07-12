@@ -14,6 +14,7 @@ import { Feather } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { useColors } from '@/hooks/useColors';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { AppHeader } from '@/components/AppHeader';
 
 interface DayPlan {
   day: number;
@@ -92,12 +93,13 @@ export default function TripPlanScreen() {
     }
   };
 
-  const topPadding = Platform.OS === 'web' ? 67 : insets.top;
+  const bottomPadding = Platform.OS === 'web' ? 84 : insets.bottom + 49;
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <AppHeader />
       <ScrollView
-        contentContainerStyle={[styles.scrollContent, { paddingTop: topPadding + 16 }]}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: bottomPadding }]}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
       >

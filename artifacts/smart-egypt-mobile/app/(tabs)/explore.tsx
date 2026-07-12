@@ -15,6 +15,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useColors } from '@/hooks/useColors';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { destinations } from '@/constants/destinations';
+import { AppHeader } from '@/components/AppHeader';
 
 export default function ExploreScreen() {
   const colors = useColors();
@@ -34,28 +35,35 @@ export default function ExploreScreen() {
     );
   }, [search]);
 
-  const topPadding = Platform.OS === 'web' ? 67 : insets.top;
+  const bottomPadding = Platform.OS === 'web' ? 84 : insets.bottom + 49;
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      {/* Header */}
+      {/* هيدر مشترك */}
+      <AppHeader />
+
+      {/* شريط البحث */}
       <View
         style={[
-          styles.header,
+          styles.searchBar,
           {
-            paddingTop: topPadding + 16,
             backgroundColor: colors.background,
             borderBottomColor: colors.border,
           },
         ]}
       >
-        <Text style={[styles.title, { color: colors.foreground }]}>
-          {t('destinations')}
-        </Text>
-        <View style={[styles.searchRow, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        <View
+          style={[
+            styles.searchRow,
+            { backgroundColor: colors.card, borderColor: colors.border },
+          ]}
+        >
           <Feather name="search" size={18} color={colors.mutedForeground} />
           <TextInput
-            style={[styles.searchInput, { color: colors.foreground, textAlign: isRTL ? 'right' : 'left' }]}
+            style={[
+              styles.searchInput,
+              { color: colors.foreground, textAlign: isRTL ? 'right' : 'left' },
+            ]}
             placeholder={t('searchPlaceholder')}
             placeholderTextColor={colors.mutedForeground}
             value={search}
@@ -73,7 +81,7 @@ export default function ExploreScreen() {
         data={filtered}
         keyExtractor={(item) => item.id}
         numColumns={2}
-        contentContainerStyle={styles.listContent}
+        contentContainerStyle={[styles.listContent, { paddingBottom: bottomPadding }]}
         showsVerticalScrollIndicator={false}
         columnWrapperStyle={styles.row}
         renderItem={({ item }) => (
@@ -89,7 +97,10 @@ export default function ExploreScreen() {
                   {language === 'ar' ? item.tagAr : item.tag}
                 </Text>
               </View>
-              <Text style={[styles.cardName, { color: colors.foreground }]} numberOfLines={1}>
+              <Text
+                style={[styles.cardName, { color: colors.foreground }]}
+                numberOfLines={1}
+              >
                 {language === 'ar' ? item.nameAr : item.name}
               </Text>
             </View>
@@ -102,15 +113,10 @@ export default function ExploreScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  header: {
+  searchBar: {
     paddingHorizontal: 16,
-    paddingBottom: 12,
+    paddingVertical: 10,
     borderBottomWidth: 1,
-    gap: 12,
-  },
-  title: {
-    fontSize: 26,
-    fontFamily: 'Inter_700Bold',
   },
   searchRow: {
     flexDirection: 'row',
@@ -128,7 +134,6 @@ const styles = StyleSheet.create({
   },
   listContent: {
     padding: 12,
-    paddingBottom: 100,
   },
   row: {
     gap: 12,
