@@ -1,0 +1,20 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "myf0Y8Vyqn-wZfZe98enh"
+uri = "file://artifacts/smart-egypt-mobile/assets/images/icon.png"
+type = "image"
+title = "Smart Egypt — App Icon"
+
+[[outputs]]
+id = "_4R7piqeyP8mqWlL6aiEG"
+uri = "file://artifacts/smart-egypt-mobile/assets/images/adaptive-icon.png"
+type = "image"
+title = "Smart Egypt — Adaptive Icon (Android)"
+
+[[outputs]]
+id = "bgmLGrOgTVo2d8zeye2kY"
+uri = "file://artifacts/smart-egypt-mobile/assets/images/splash.png"
+type = "image"
+title = "Smart Egypt — Splash Screen"

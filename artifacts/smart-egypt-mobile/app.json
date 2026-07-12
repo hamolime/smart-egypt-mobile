@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Smart Egypt Mobile",
+    "name": "Smart Egypt",
     "slug": "smart-egypt-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -9,14 +9,21 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/images/icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "image": "./assets/images/splash.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#0D1B2A"
     },
     "ios": {
-      "supportsTablet": false
+      "supportsTablet": false,
+      "bundleIdentifier": "com.smartegypt.mobile"
     },
-    "android": {},
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#0D1B2A"
+      },
+      "package": "com.smartegypt.mobile"
+    },
     "web": {
       "favicon": "./assets/images/icon.png"
     },
