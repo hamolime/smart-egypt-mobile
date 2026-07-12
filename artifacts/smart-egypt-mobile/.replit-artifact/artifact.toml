@@ -1,0 +1,23 @@
+kind = "mobile"
+previewPath = "/smart-egypt-mobile/"
+title = "Smart Egypt Mobile"
+version = "1.0.0"
+id = "artifacts/smart-egypt-mobile"
+router = "expo-domain"
+
+[[services]]
+name = "expo"
+ensurePreviewReachable = "/status"
+paths = [ "/smart-egypt-mobile/" ]
+localPort = 25435
+
+[services.development]
+run = "pnpm --filter @workspace/smart-egypt-mobile run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/smart-egypt-mobile", "run", "build" ]
+run = [ "pnpm", "--filter", "@workspace/smart-egypt-mobile", "run", "serve" ]
+
+[services.env]
+PORT = "25435"
+BASE_PATH = "/smart-egypt-mobile/"
