@@ -122,8 +122,7 @@ const styles = StyleSheet.create({
   },
   heroGradient: {
     ...StyleSheet.absoluteFillObject,
-    background: 'linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.75) 100%)',
-    backgroundColor: 'rgba(0,0,0,0.2)',
+    backgroundColor: 'rgba(0,0,0,0.3)',
   },
   backBtn: {
     position: 'absolute',
@@ -154,9 +153,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 32,
     fontFamily: 'Inter_700Bold',
-    textShadowColor: 'rgba(0,0,0,0.5)',
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 4,
+    textShadow: '0px 2px 4px rgba(0,0,0,0.5)',
   },
   content: {
     padding: 20,
